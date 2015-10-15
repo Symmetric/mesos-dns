@@ -407,7 +407,37 @@ func isUDP(w dns.ResponseWriter) bool {
 // permitted length of the given transmission channel.
 // See https://tools.ietf.org/html/rfc1035#section-4.2.1
 func truncate(m *dns.Msg, udp bool) *dns.Msg {
-	m.Truncated = udp && m.Len() > dns.MinMsgSize
+	bufsize := 0
+	switch udp {
+	case true:
+		if opt := m.IsEdns0(); opt != nil {
+			bufsize = int(opt.UDPSize())
+		}
+		if bufsize < dns.MinMsgSize {
+			bufsize = dns.MinMsgSize
+		}
+	case false:
+		bufsize = dns.MaxMsgSize - 1
+	}
+
+	if m.Len() > bufsize {
+		m.Truncated = true
+		i := 0
+		for m.Len() > bufsize {
+			switch {
+			case len(m.Extra) > 0:
+				m.Extra = m.Extra[:len(m.Extra)-1]
+			case len(m.Answer) > 0:
+				m.Answer = m.Answer[:len(m.Answer)-1]
+			case len(m.Ns) > 0:
+				m.Ns = m.Ns[:len(m.Ns)-1]
+			default:
+				panic("Couldn't truncate message to fit dns.MinMsgSize")
+			}
+			i++
+		}
+		logging.VeryVerbose.Printf("Message truncated, removed %d answers", i)
+	}
 	return m
 }
 
