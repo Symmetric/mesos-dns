@@ -1,3 +1,6 @@
+TBD: v-next
+  Use Mesos 0.26 version of NetworkInfo - breaks compatibility with Mesos 0.25 (#345)
+
 2015-10-09: v0.4.0
   Smarter leading Mesos master detection timeout logic (#284, #306, #320)
   resolver: Fix data races to RNG and SOASerial (#317)

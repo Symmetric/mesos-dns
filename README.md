@@ -10,7 +10,9 @@ is considered **alpha**. We have adopted a [semantic versioning](http://semver.o
 
 ## Compatibility
 `mesos-N` tags mark the start of support for a specific Mesos version while
-maintaining backwards compatibility with the previous major version.
+maintaining backwards compatibility with the previous major version. 
+This release breaks compatibility with handling NetworkInfo on versions
+before 0.26. It is compatible with Mesos 0.26 and newer.
 
 ## Installing
 The official distribution and installation channel is pre-compiled binaries available in [Github releases](https://github.com/mesosphere/mesos-dns/releases).
